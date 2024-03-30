@@ -1,11 +1,15 @@
+import { addZero } from "./helperFunction.js";
+
 const body = document.querySelector('body');
 const container = document.querySelector('.container');
 const timerTemplate = document.querySelector('#timer-template').content;
+const themeBtn = document.querySelector('.main__theme-button');
+
+const INITIAL_MINUTES = 25;
+const INITIAL_SECONDS = 0;
+
 let timers;
 let removeTimerButtons = [];
-const themeBtn = document.querySelector('.main__theme-button');
-const initialMinutes = 25;
-const initialSeconds = 0;
 let dataTimerId;
 let counter = 0;
 
@@ -21,35 +25,33 @@ themeBtn.addEventListener('click', () => {
   });
 });
 
-function addZero(num) {
-  if (num < 10) {
-    return '0' + num;
-  } else { return num; }
-}
-
 function addTimer() {
   const newTimer = timerTemplate.cloneNode(true);
   const timer = newTimer.querySelector('.timer');
   const time = newTimer.querySelector('.timer__time');
+
   let currentTimer;
-  let minutes = initialMinutes;
-  let seconds = initialSeconds;
+  let minutes = INITIAL_MINUTES;
+  let seconds = INITIAL_SECONDS;
   time.textContent = `${addZero(minutes)}:${addZero(seconds)}`;
+
   const playBtn = newTimer.querySelector('.timer__play-button');
   const addTimerBtn = newTimer.querySelector('.timer__add-timer-button');
   const speakerBtn = newTimer.querySelector('.timer__speaker-button');
   const speaker = new Audio('../assets/sounds/timer-signal.ogg');
   const removeTimerBtn = timer.querySelector('.timer__remove-timer-button');
+
+  const themeBtnDarkTheme = themeBtn.classList.contains('main__theme-button--dark-theme');
   
   if (
-    themeBtn.classList.contains('main__theme-button--dark-theme') &&
+    themeBtnDarkTheme &&
     !time.classList.contains('timer__time--dark-theme')
   ) {
     time.classList.add('timer__time--dark-theme');
   }
   
   if (
-    themeBtn.classList.contains('main__theme-button--dark-theme') &&
+    themeBtnDarkTheme &&
     !removeTimerBtn.classList.contains('timer__remove-timer-button--dark-theme')
   ) {
     removeTimerBtn.classList.add('timer__remove-timer-button--dark-theme');
@@ -74,7 +76,7 @@ function addTimer() {
       time.textContent = `${addZero(minutes)}:${addZero(seconds)}`;
     }, 1000);
   
-    this.removeEventListener('click', startTimer);
+    window.removeEventListener('click', startTimer);
   }
 
   playBtn.addEventListener('click', () => {
@@ -96,8 +98,8 @@ function addTimer() {
 
   addTimerBtn.addEventListener('click', () => {
     if (addTimerBtn.classList.contains('timer__add-timer-button--stop')) {
-      minutes = initialMinutes;
-      seconds = initialSeconds;
+      minutes = INITIAL_MINUTES;
+      seconds = INITIAL_SECONDS;
       addTimerBtn.classList.remove('timer__add-timer-button--stop');
       time.textContent = `${addZero(minutes)}:${addZero(seconds)}`;
     } else {
@@ -147,6 +149,8 @@ function addTimer() {
   } else {
     document.querySelector('[data-timer-id="'+dataTimerId+'"]').insertAdjacentElement('afterend', timer);
   }
+
+  removeTimerButtons = document.querySelectorAll('.timer__remove-timer-button');
 }
 
 addTimer();
